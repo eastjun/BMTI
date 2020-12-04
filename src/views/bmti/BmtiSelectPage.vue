@@ -62,8 +62,8 @@
             </v-card>
           </div>
           <div class="d-flex justify-center">
-            <v-btn @click="onUpdateType(TYPES.ENFJ)" class="mx-auto" large color="#2D7673" rounded dark>잇츠 미!</v-btn>
-            <!--            <v-btn to="/bmti" class="mx-auto" large color="#2D7673" rounded dark>잇츠 미!</v-btn>-->
+            <!--            <v-btn @click="onUpdateType(TYPES.ENFJ)" class="mx-auto" large color="#2D7673" rounded dark>잇츠 미!</v-btn>-->
+            <v-btn to="/bmti" class="mx-auto" large color="#2D7673" rounded dark>잇츠 미!</v-btn>
           </div>
         </v-card>
       </v-sheet>
@@ -98,6 +98,7 @@ export default {
   },
   data() {
     return {
+      slides: 7,
       TYPES: {
         ENFJ: 'ENFJ'
       }

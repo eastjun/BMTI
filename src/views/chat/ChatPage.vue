@@ -24,7 +24,7 @@
         <div v-for="(message, index) in messages" :key="index" class="msg right-msg my-2">
           <div class="d-flex flex-column">
             <div class="w-100">
-              <v-card width="70%" flat color="#6FEAE5" class="rounded-l-xl rounded-br-xl py-3 px-4 float-right">
+              <v-card width="100%" flat color="#6FEAE5" class="rounded-l-xl rounded-br-xl py-3 px-4 float-right">
                 {{ message }}
               </v-card>
             </div>
@@ -55,7 +55,7 @@ export default {
     ...mapMutations([HIDE_PRIMARY_BACKGROUND, SHOW_SNACKBAR]),
     ...mapActions([FETCH_CHAT_MESSAGES]),
     addMessage() {
-      this.messages.push(this.myMessage)
+      this.messages.unshift(this.myMessage)
       this.myMessage = ''
     }
   },

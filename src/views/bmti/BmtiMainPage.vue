@@ -1,4 +1,5 @@
 <template>
+  <!--  https://wlada.github.io/vue-carousel-3d/api/-->
   <v-sheet color="transparent">
     <v-sheet class="relative" height="350px">
       <carousel-3d @after-slide-change="onAfterSlideChange" :perspective="0" :height="320" :border="0" class="mt-0">
@@ -81,20 +82,20 @@
 
       <v-sheet v-if="this.targetIndex === 1" color="white" height="50vh" class="px-6 relative">
         <v-list three-line class="px-0 pt-0">
-          <template v-for="(chatRoom, index) in chatRooms.slice().reverse()">
-            <v-divider v-if="index !== 0" :key="`${index}-divider`" :inset="false"></v-divider>
-            <router-link :to="`/chat?roomId=${chatRoom.id}`" :key="index" class="text-decoration-none">
-              <v-list-item class="px-0">
-                <v-avatar v-if="chatRoom.imageUrl" tile class="rounded-lg mb-2">
-                  <img :src="chatRoom.imageUrl" />
+          <template v-for="(item, index) in chatLists.slice().reverse()">
+            <v-divider v-if="index !== 0" :key="`${index}-divider`" :inset="item.inset"></v-divider>
+            <router-link to="chat" :key="index" class="text-decoration-none">
+              <v-list-item :key="item.title" class="px-0">
+                <v-avatar tile class="rounded-lg mb-2">
+                  <img :src="item.imageUrl" />
                 </v-avatar>
                 <v-list-item-content class="pl-3">
-                  <v-list-item-title>{{ chatRoom.title }}</v-list-item-title>
+                  <v-list-item-title>{{ item.title }}</v-list-item-title>
                   <v-list-item-subtitle class="">
-                    {{ chatRoom.subTitle }}
+                    {{ item.subtitle }}
                     <div class="mt-1">
-                      {{ chatRoom.hostName }} {{ chatRoom.hostLevel && '| VIP' }}
-                      <v-chip class="float-right" color="#2D7673" small dark>방문</v-chip>
+                      독고배달 | VVIP
+                      <v-chip class="float-right" color="#2D7673" small dark>{{ item.type }}</v-chip>
                     </div>
                   </v-list-item-subtitle>
                 </v-list-item-content>
@@ -120,7 +121,14 @@
                   autofocus
                   required
                 ></v-text-field>
-                <v-text-field v-model="chatRoom.subTitle" placeholder="부제 이름" color="grey darken-2" :rules="rules.text" required></v-text-field>
+                <v-text-field
+                  v-model="chatRoom.subTitle"
+                  placeholder="부제 이름"
+                  color="grey darken-2"
+                  :rules="rules.text"
+                  autofocus
+                  required
+                ></v-text-field>
                 <!--                @change="getReviewLectures(session.id, reviewerId)"-->
                 <v-select
                   v-model="chatRoom.chatRoomType"
@@ -128,15 +136,9 @@
                   label="채팅방 타입"
                   color="cyan"
                   item-color="grey darken-3"
-                  class="mt-4"
+                  outlined
                   dense
                 ></v-select>
-                <v-file-input
-                  prepend-icon="mdi-camera"
-                  accept="image/png, image/jpeg, image/bmp"
-                  @change="selectFile"
-                  label="이미지 첨부"
-                ></v-file-input>
                 <v-btn @click="onSubmit" width="100%" color="primary" :disabled="!valid" depressed :dark="valid">방 만들기</v-btn>
               </v-form>
             </template>
@@ -189,7 +191,7 @@ import { mapActions, mapGetters, mapMutations } from 'vuex'
 import validator from '@/utils/validator'
 import { SHOW_SNACKBAR } from '@/store/shared/mutation.types'
 import { SNACKBAR_MESSAGES } from '@/utils/constants'
-import { CREATE_CHAT_ROOM, FETCH_CHAT_MESSAGES, FETCH_CHAT_ROOMS, UPLOAD_IMAGE } from '@/store/shared/action.types'
+import { CREATE_CHAT_ROOM } from '@/store/shared/action.types'
 import dialog from '@/mixins/dialog'
 import Dialog from '@/components/dialogs/Dialog'
 
@@ -202,52 +204,43 @@ export default {
   },
   mixins: [dialog],
   computed: {
-    ...mapGetters(['chatRooms', 'user', 'file'])
-  },
-  async created() {
-    try {
-      await this.fetchChatRooms()
-    } catch (e) {
-      throw new Error(e)
-    }
+    ...mapGetters(['user'])
   },
   methods: {
     ...mapMutations([SHOW_SNACKBAR]),
-    ...mapActions([CREATE_CHAT_ROOM, FETCH_CHAT_MESSAGES, FETCH_CHAT_ROOMS, UPLOAD_IMAGE]),
+    ...mapActions([CREATE_CHAT_ROOM]),
     onAfterSlideChange(index) {
       this.targetIndex = index
     },
     async onSubmit() {
       try {
-        await this.createChatRoom({ ...this.chatRoom, userId: this.user.id })
-        this.showSnackbar(SNACKBAR_MESSAGES.COMMON.SUCCESS)
+        this.chatLists.push({
+          imageUrl: require('@/assets/elements/food1.png'),
+          title: this.chatRoom.title,
+          subtitle: this.chatRoom.subTitle,
+          creator: {
+            nickname: '감독고배달',
+            degree: '귀한분'
+          },
+          type: this.chatRoom.chatRoomType
+        })
         this.closeDialog()
-        await this.fetchChatRooms()
+        // await this.createChatRoom({ ...this.chatRoom })
+        this.showSnackbar(SNACKBAR_MESSAGES.COMMON.SUCCESS)
       } catch (e) {
         this.showSnackbar(SNACKBAR_MESSAGES.COMMON.FAIL)
-        throw new Error(e)
-      }
-    },
-    async selectFile(file) {
-      try {
-        await this.uploadImage(file)
-        this.chatRoom.imageUrl = this.file.url
-      } catch (e) {
-        this.showSnackbar(SNACKBAR_MESSAGES.COMMON.FAIL)
-        throw new Error(e)
       }
     }
   },
   data() {
     return {
-      uploadedImage: {},
       chatRoom: {
-        chatRoomType: 'ORDER',
+        chatRoomType: '',
         imageUrl: '',
         subTitle: '',
         title: ''
       },
-      chatRoomTypes: ['ORDER', 'VISIT'],
+      chatRoomTypes: ['주문', '방문', '리뷰'],
       valid: false,
       rules: {
         ...validator
@@ -292,6 +285,28 @@ export default {
         {
           imgUrl: require('@/assets/elements/food6.png'),
           subtitle: '가장 맛있는 한식'
+        }
+      ],
+      chatLists: [
+        {
+          imageUrl: require('@/assets/elements/food1.png'),
+          title: '신상 맛집 뚫으러 갑니다~~!',
+          subtitle: '군자역에 곱창집 새로 생겼어요!',
+          creator: {
+            nickname: '감독고배달',
+            degree: '귀한분'
+          },
+          type: '방문'
+        },
+        {
+          imageUrl: require('@/assets/elements/food2.png'),
+          title: '닭강정 나눠서 구매하실 분!',
+          subtitle: '여러 가지 맛 나눠 먹어요',
+          creator: {
+            nickname: '감독고배달',
+            degree: '귀한분'
+          },
+          type: '포장'
         }
       ]
     }

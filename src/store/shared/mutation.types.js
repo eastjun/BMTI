@@ -11,3 +11,10 @@ export const LOGIN = 'login'
 export const LOGOUT = 'logout'
 
 export const SET_USER = 'setUser'
+
+export const SET_CHAT_ROOM = 'setChatRoom'
+export const SET_CHAT_ROOMS = 'setChatRooms'
+
+export const SET_FILE = 'setFile'
+
+export const SET_CHAT_MESSAGES = 'setChatMessages'

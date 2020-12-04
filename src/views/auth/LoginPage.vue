@@ -26,12 +26,14 @@
 
 <script>
 import validator from '@/utils/validator'
-import { LOGIN } from '@/store/shared/mutation.types'
-import { mapActions } from 'vuex'
+import { LOGIN, SHOW_SNACKBAR } from '@/store/shared/mutation.types'
+import { mapActions, mapMutations } from 'vuex'
+import { SNACKBAR_MESSAGES } from '@/utils/constants'
 
 export default {
   name: 'Login',
   methods: {
+    ...mapMutations([SHOW_SNACKBAR]),
     ...mapActions([LOGIN]),
     isValid() {
       return this.$refs.loginForm.validate()
@@ -41,6 +43,7 @@ export default {
         await this.login(this.loginInfo)
         await this.$router.replace('/bmti')
       } catch (e) {
+        this.showSnackbar(SNACKBAR_MESSAGES.LOGIN.FAIL)
         throw new Error(e)
       }
     }

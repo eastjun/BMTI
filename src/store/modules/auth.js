@@ -1,6 +1,6 @@
 import { LOGIN, REMOVE_ASSESS_TOKEN, SET_ASSESS_TOKEN, SET_USER } from '@/store/shared/mutation.types'
 import UserService from '@/api/modules/auth'
-import { SIGNUP } from '@/store/shared/action.types'
+import { BTMI_UPDATE, SIGNUP } from '@/store/shared/action.types'
 
 const state = {
   accessToken: null,
@@ -41,7 +41,16 @@ const actions = {
     try {
       const { data } = await UserService.login({ email, password })
       commit(SET_USER, data)
-      localStorage.setItem('user', data)
+      localStorage.setItem('user', JSON.stringify(data))
+    } catch (e) {
+      throw new Error(e)
+    }
+  },
+  async [BTMI_UPDATE]({ commit }, { id, userType }) {
+    try {
+      const { data } = await UserService.update({ id, userType })
+      commit(SET_USER, data)
+      localStorage.setItem('user', JSON.stringify(data))
     } catch (e) {
       throw new Error(e)
     }

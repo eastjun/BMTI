@@ -17,6 +17,9 @@ const ApiService = {
   post(uri, params) {
     return Vue.axios.post(`${uri}`, params)
   },
+  patch(uri, params) {
+    return Vue.axios.patch(`${uri}`, params)
+  },
   update(uri, params) {
     return Vue.axios.put(uri, params)
   },

@@ -4,6 +4,7 @@ import snackbar from '@/store/modules/snackbar'
 import socket from '@/store/modules/socket'
 import color from '@/store/modules/color'
 import auth from '@/store/modules/auth'
+import chat from '@/store/modules/chat'
 
 Vue.use(Vuex)
 
@@ -12,6 +13,7 @@ export default new Vuex.Store({
     snackbar,
     socket,
     auth,
-    color
+    color,
+    chat
   }
 })

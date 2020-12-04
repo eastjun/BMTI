@@ -1,6 +1,6 @@
 <template>
   <v-sheet color="primary" class="px-6 py-12 relative">
-    <img :src="require('@/assets/elements/냥이_손.png')" width="150" class="absolute cat-hand-image" />
+    <img :src="require('@/assets/elements/냥이_손3.png')" width="120" class="absolute cat-hand-image" />
     <div class="max-width-sm">
       <v-sheet color="transparent" dark>
         <h1 class="text-h2 relative">
@@ -51,7 +51,7 @@
               <v-card-title class="font-hanna py-2 px-0 text-left">
                 궁합 굿
               </v-card-title>
-              <v-card-text class="pb-0 d-flex">
+              <v-card-text class="pb-0 pl-0 d-flex">
                 <div class="px-0">
                   <div>
                     <img class="mx-auto" width="80" :src="require('@/assets/elements/type_a_food_3.png')" />
@@ -62,40 +62,45 @@
             </v-card>
           </div>
           <div class="d-flex justify-center">
-            <v-btn class="mx-auto" large color="#2D7673" rounded dark>잇츠 미!</v-btn>
+            <v-btn @click="onUpdateType(TYPES.ENFJ)" class="mx-auto" large color="#2D7673" rounded dark>잇츠 미!</v-btn>
+            <!--            <v-btn to="/bmti" class="mx-auto" large color="#2D7673" rounded dark>잇츠 미!</v-btn>-->
           </div>
         </v-card>
       </v-sheet>
     </div>
-
-    <!--    <div class="px-8">-->
-    <!--      <v-sheet color="primary" dark>-->
-    <!--        <v-img :src="require('@/assets/elements/새우배달이.png')" width="250" class="absolute shrimp-baedal-image" />-->
-    <!--        <div class="mb-2">최고의 먹궁합을 찾아라!</div>-->
-    <!--        <div class="font-hanna text-h1 relative">-->
-    <!--              BM <br />-->
-    <!--              MBTI 엿보기-->
-    <!--          <v-img :src="require('@/assets/elements/냥이_손.png')" class="absolute bottom-10 left-0" />-->
-    <!--        </div>-->
-    <!--        <div class="text-h5 mt-6 mb-8">-->
-    <!--          나를 알고 <br />-->
-    <!--          너를 알면 <br />-->
-    <!--          우린 <br />-->
-    <!--          먹메이트!-->
-    <!--        </div>-->
-    <!--      </v-sheet>-->
-    <!--      <v-btn to="/bmti" x-large color="white" class="rounded-xl">내 BMTI 확인하기</v-btn>-->
-    <!--      <v-img :src="require('@/assets/elements/냥이_손.png')" width="200" class="absolute cat-hand-image" />-->
-    <!--    </div>-->
   </v-sheet>
 </template>
 
 <script>
+import { BTMI_UPDATE } from '@/store/shared/action.types'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
+import { SHOW_SNACKBAR } from '@/store/shared/mutation.types'
+import { SNACKBAR_MESSAGES } from '@/utils/constants'
+
 export default {
   name: 'BmtiSelectPage',
+  computed: {
+    ...mapGetters(['user'])
+  },
+  methods: {
+    ...mapMutations([SHOW_SNACKBAR]),
+    ...mapActions([BTMI_UPDATE]),
+    async onUpdateType(userType) {
+      try {
+        await this.btmiUpdate({ id: this.user.id, userType })
+        this.showSnackbar(SNACKBAR_MESSAGES.COMMON.SUCCESS)
+        this.$router.replace('/bmti')
+      } catch (e) {
+        this.showSnackbar(SNACKBAR_MESSAGES.COMMON.FAIL)
+        throw new Error(e)
+      }
+    }
+  },
   data() {
     return {
-      types: []
+      TYPES: {
+        ENFJ: 'ENFJ'
+      }
     }
   }
 }
@@ -108,9 +113,9 @@ export default {
 }
 
 .cat-hand-image {
-  right: -40px;
-  top: -40px;
-  transform: rotate(-20deg);
+  right: 0px;
+  top: 0px;
+  /*transform: rotate(-20deg);*/
 }
 
 .border-dashed {

@@ -1,1 +1,6 @@
 export const SIGNUP = 'signup'
+export const BTMI_UPDATE = 'btmiUpdate'
+export const FETCH_CHAT_ROOMS = 'fetchChatRooms'
+export const CREATE_CHAT_ROOM = 'createChatRoom'
+export const UPLOAD_IMAGE = 'uploadImage'
+export const FETCH_CHAT_MESSAGES = 'fetchChatMessages'

@@ -21,12 +21,15 @@
 
 <script>
 import validator from '@/utils/validator'
-import { mapActions } from 'vuex'
+import { mapActions, mapMutations } from 'vuex'
 import { SIGNUP } from '@/store/shared/action.types'
+import { SNACKBAR_MESSAGES } from '@/utils/constants'
+import { SHOW_SNACKBAR } from '@/store/shared/mutation.types'
 
 export default {
   name: 'SignUp',
   methods: {
+    ...mapMutations([SHOW_SNACKBAR]),
     ...mapActions([SIGNUP]),
     isValid() {
       return this.$refs.singupForm.validate()
@@ -36,6 +39,7 @@ export default {
         await this.signup(this.userInfo)
         await this.$router.replace('/login')
       } catch (e) {
+        this.showSnackbar(SNACKBAR_MESSAGES.SIGN_UP.FAIL)
         throw new Error(e)
       }
     }

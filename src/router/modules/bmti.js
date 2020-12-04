@@ -1,9 +1,12 @@
 import BmtiMainPage from '@/views/bmti/BmtiMainPage'
 import BmtiResultPage from '@/views/bmti/BmtiResultPage'
 import BmtiSelectPage from '@/views/bmti/BmtiSelectPage'
+import store from '@/store'
+import { SET_USER } from '@/store/shared/mutation.types'
 
 const requireAuth = () => (from, to, next) => {
-  const user = localStorage.getItem('user')
+  const user = JSON.parse(localStorage.getItem('user'))
+  store.commit(SET_USER, user)
   if (user) {
     return next()
   }
@@ -18,11 +21,13 @@ const bmtiRoutes = [
   },
   {
     path: '/bmti/result',
-    component: BmtiResultPage
+    component: BmtiResultPage,
+    beforeEnter: requireAuth()
   },
   {
     path: '/bmti/select',
-    component: BmtiSelectPage
+    component: BmtiSelectPage,
+    beforeEnter: requireAuth()
   }
 ]
 export default bmtiRoutes
